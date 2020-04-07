@@ -38,12 +38,17 @@ class ProductController extends Controller
         $product = Product::find($id);
         $oldCart = Session::has('cart') ? Session::get('cart') : null;
         $cart    = new Cart($oldCart);
-        $cart->add($product, $product->id);
 
-        $request->session()->put('cart', $cart);
-        Session::flash('success','Item is successfully added to your cart!'); 
-
-        
+        if($cart->add($product, $request->qty)){
+            // $cart->add($product, $request->qty);
+            $request->session()->put('cart', $cart);
+            // dd(Session::get($oldCart) );
+            Session::flash('success','Item is successfully added to your cart!'); 
+                
+        }else{
+            Session::flash('danger','Item is not available!'); 
+        }
+ 
     } 
     public function my_cart()
     {
@@ -62,8 +67,8 @@ class ProductController extends Controller
         
         $oldCart = Session::has('cart') ? Session::get('cart') : null;
         $cart    = new Cart($oldCart);
-        $total   = $cart->totalPrice; 
         $cart->reduceByOne($id);
+        $total   = $cart->totalPrice; 
 
         if(count($cart->item) > 0){
             Session::put('cart', $cart);
@@ -71,8 +76,6 @@ class ProductController extends Controller
             Session::forget('cart');
         }
         return view ('shop.cart', [ 'products' =>$cart->item,'totalPrice'=>$total]);
-        
-
 
     }
 
@@ -83,6 +86,7 @@ class ProductController extends Controller
         $oldCart = Session::has('cart') ? Session::get('cart') : null;
         $cart    = new Cart($oldCart);
         $cart->removeItem($id);
+        $total   = $cart->totalPrice; 
 
         if(count($cart->item) > 0){
             Session::put('cart', $cart);
@@ -93,22 +97,6 @@ class ProductController extends Controller
         return view ('shop.cart', [ 'products' =>$cart->item,'totalPrice'=>$total]);
 
     }
-
-    // public function checkOut($item)
-    // {
-    //     $oldCart = Session::has('cart') ? Session::get('cart') : null;
-    //     $cart    = new Cart($oldCart);
-    //     $cart->removeItem($id);
-
-    //     if(count($cart->item) > 0){
-    //         Session::put('cart', $cart);
-    //     }else{
-    //         Session::forget('cart');
-    //          return view ('shop.cart');
-    //     }
-    //     return view ('shop.checkout', [ 'products' =>$cart->item,'totalPrice'=>$total]);
-        
-    // }    
 
     public function checkOut()
     {
@@ -125,6 +113,10 @@ class ProductController extends Controller
 
     public function payment()
     {
+
+        $oldCart = Session::has('cart') ? Session::get('cart') : null;
+        $cart    = new Cart($oldCart);
+        Session::forget('cart');
         return view ('shop.payment_confirmed');
     } 
 }

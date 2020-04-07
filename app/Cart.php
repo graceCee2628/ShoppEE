@@ -13,7 +13,7 @@ class Cart
 
     public function __construct($oldCart)
     {
-       //if card already exists
+       //if cart already exists
       if($oldCart){
           
           $this->item        = $oldCart->item;
@@ -24,28 +24,48 @@ class Cart
       }
     }
 
-    public function add($item,$id)
+    public function add($item, $qty)
     {
-       
+
+        
        $storedItem  = [
                         'qty'   => 0,
                         'price' => $item->price,
                         'item'  => $item,
+                        'maxqty'=> $item->qty,
                        ];
 
         if($this->item){
 
-             if(array_key_exists($id, $this->item)){
+             if(array_key_exists($item->id, $this->item)){
+                $storedItem = $this->item[$item->id];
 
-                 $storedItem = $this->item[$id];
+                 // $this->item[$item->id]['qty' ] = $item->qty;
+
+                 // $
+                
+
+                if($item[$item->qty] == 0){
+                 return false;
+                }
              }
         }
 
-        $storedItem['qty']++; //add each time qty 
-        $storedItem['price'] = $item->price * $storedItem['qty'];
-        $this->item[$id] = $storedItem;
-        $this->totalQty++;
-        $this->totalPrice += $item->price;
+
+        $storedItem['qty']+= $qty ; //add each time qty 
+        $storedItem['price'] = $item->price * $qty; //$qty input qty by the cust
+        if( $storedItem['qty'] > $item->qty){
+          return false;
+        }
+
+        $this->item[$item->id] = $storedItem;
+        // $this->totalQty++;
+        $this->totalQty += $storedItem['qty'];
+        $this->totalPrice +=  $storedItem['price'];
+        return true;
+
+
+
 
     }
 

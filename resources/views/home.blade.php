@@ -65,7 +65,7 @@
                              <label>Qty:</label>
                           </div>
                           <div class="col-6">
-                            <input class="form-control" type="number" id="qty" name="qty" min="1" max="1" width="50%">
+                            <input class="form-control" type="number" id="qty" name="qty" min="1" max="" width="50%">
                           </div> 
                         </div>
                         <br>
@@ -86,125 +86,79 @@
   </div>
 </div>
 
+  @section('page-script')
+  <script type="text/javascript">
+      $(document).ready(function(){
+                $.ajaxSetup({
+                  headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+          }); 
 
-<script type="text/javascript">
-    $(document).ready(function(){
+          //TO DISPLAY THE DATA USING MODAL SO THAT THE USER CAN ADD THE ITEM TO CART
+            $(".addtocart").on('click',function(e){
+              e.preventDefault();
+              let id = $(this).attr('id');
+              $.ajax({
+                  url:'shop/'+id+'/view',
+                  method: 'GET',
+                  data:{
+                      id:id
+                  },
+                  success:function(data){
+                      $('#image_preview_container').attr('src','/images/'+data.image);
+                      $('#id').text(data.id);
+                      $('#pcode').text(data.product_code);
+                      $('#pordername').text(data.name);
+                      $('#porderprice').text( data.price);
+                      $('#stocks').text(data.qty); 
+                      $('#porderdesc').text(data.description);
+                      $('#formModal').modal('show');
+                      $('#qty').attr('max',data.qty); //passing the amount of stock stored in the database
+                  },
 
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            }); 
-
-        //TO DISPLAY THE DATA USING MODAL SO THAT THE USER CAN ADD THE ITEM TO CART
-          $(".addtocart").on('click',function(e){
-            e.preventDefault();
-            let id = $(this).attr('id');
-            $.ajax({
-                url:'shop/'+id+'/view',
-                method: 'GET',
-                data:{
-                    id:id
-                },
-                success:function(data){
-                    $('#image_preview_container').attr('src','/images/'+data.image);
-                    $('#id').text(data.id);
-                    $('#pcode').text(data.product_code);
-                    $('#pordername').text(data.name);
-                    $('#porderprice').text( data.price);
-                    $('#stocks').text(data.qty); 
-                    $('#porderdesc').text(data.description);
-                    $('#formModal').modal('show');
-                },
-
-            });
-             
-          });
-
-
-          $('#form').on('submit', function(e){
-            e.preventDefault();
-            var id = $('#id').text();
-            var qty = $('#qty').val();
-            var porderprice = $('#porderprice').text();
-            var pordername = $('#pordername').text();
-
-            var pcode = $('#pcode').text();
-            var stocks = $('#stocks').text(); 
-              
-            var totalprice =  qty * porderprice;
-
-
-            $.ajax({
-                url: '/add-to-cart/'+id,
-                method:'POST',
-                data:{
-                    id,
-                    qty,
-                    porderprice,
-                    pordername,
-                    pcode,
-                    totalprice
-                },
-                success:function(){
-                    location.reload();
-                }
+              });
+               
             });
 
 
-          });
-/*
-|--------------------------------------------------------------------------
-| ADD TO CART BUT IT'S STILL STACKING
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+            $('#form').on('submit', function(e){
+              e.preventDefault();
+              var id = $('#id').text();
+              var qty = $('#qty').val();
+              var stocks = $('#stocks').text();
+
+              var maxlengthNumber = parseInt($('#qty').attr('max'));  
+              var inputValueLength = parseInt($('#qty').val()); 
 
 
-          // $('#form').on('submit', function(e){
-          //   e.preventDefault();
-          //   var id = $('#id').text();
-          //   var qty = $('#qty').val();
-          //   var porderprice = $('#porderprice').text();
-          //   var pordername = $('#pordername').text();   
+              // if( stocks == 0 ){
+                // alert('Stock is unavailable');
+              // }else{
+                $.ajax({
+                    url: '/add-to-cart/'+ id,
+                    method:'POST',
+                    data:{
+                        qty
+                    },
+                    success:function(data){
+                        console.log(data);
+                        location.reload();
+                    }
+                    // error:function(error){
+                    //   alert('Stock is unavailable!');
+                      
+                    // }
+                });              
+              // }
 
 
-           
-          //   var pcode = $('#pcode').text();
-          //   var stocks = $('#stocks').text();
-
-          //   var totalprice =  qty * porderprice;
-          //   var remaining_stocks = stocks - qty;
+            });
 
 
-            
-          //   $.ajax({
-          //       url: '/add-to-cart',
-          //       method:'POST',
-          //       data:{
-          //           id,
-          //           qty,
-          //           porderprice,
-          //           pordername,
-          //           pcode,
-          //           totalprice
-          //       },
-          //       success:function(){
-          //           location.reload();
-          //       }
-          //   });
+      });      
 
-
-          // });
-
-    });      
-
-</script>
-
+  </script>
+  @endsection
 
 @endsection

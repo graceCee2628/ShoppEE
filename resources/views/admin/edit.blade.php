@@ -99,61 +99,61 @@
     </div>
 </div>
 
+    @section('page-script')
+    <script type="text/javascript">
 
-<script type="text/javascript">
-
-    $(document).ready(function(){
+        $(document).ready(function(){
 
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                }); 
+
+
+              //Image change
+              $('#pimage').change(function(){
+
+                let reader = new FileReader();
+                reader.onload = (e) => { 
+                  $('#image_preview_container').attr('src', e.target.result); 
                 }
-            }); 
+                reader.readAsDataURL(this.files[0]); 
 
-
-          //Image change
-          $('#pimage').change(function(){
-
-            let reader = new FileReader();
-            reader.onload = (e) => { 
-              $('#image_preview_container').attr('src', e.target.result); 
-            }
-            reader.readAsDataURL(this.files[0]); 
-
-          });
+              });
 
 
 
-          $('#form').on('submit', function(e){
-            e.preventDefault();
-            var formData = new FormData(this);
+              $('#form').on('submit', function(e){
+                e.preventDefault();
+                var formData = new FormData(this);
 
-            
+                
 
-            $.ajax({
-                type:'POST',
-                url: "{{ url('update-product')}}",
-                data: formData,
-                cache:false,
-                contentType: false,
-                processData: false,
-                success:function(data) {
-                    console.log('Updated:' +data);
-                    alert('Successfully Updated!');
-                    window.location.assign('/admin');
-                                       
-                },
-                error:function(data){
-                    console.log(data.responseJSON.errors);
-                }             
-            });
-          });
+                $.ajax({
+                    type:'POST',
+                    url: "{{ url('update-product')}}",
+                    data: formData,
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    success:function(data) {
+                        console.log('Updated:' +data);
+                        alert('Successfully Updated!');
+                        window.location.assign('/admin');
+                                           
+                    },
+                    error:function(data){
+                        console.log(data.responseJSON.errors);
+                    }             
+                });
+              });
 
-    });    
-
-
-</script>
+        });    
 
 
+    </script>
+
+    @endsection
 @endsection

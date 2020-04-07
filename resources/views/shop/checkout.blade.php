@@ -36,31 +36,13 @@
                       </div>
                     </div>
                     <a href="/shop/pay"type="submit" id="{{$product['item']['id']}}" class="btn btn-success form-control checkout"> Continue to checkout</a>
-                    <!-- <a href=""type="submit" id="{{$product['item']['id']}}" class="btn btn-success form-control checkout"> Continue to checkout</a> -->
                   </div>
                 </div>
             </div>
         </div>
      </div>   
 </div>
-<script type="text/javascript">
-    $(document).ready(function(){
-        $.ajaxSetup({
-            headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        // $('.checkout').on('click', function(e){
-        //   e.preventDefault();
-        //   var total = $(this).attr('#total');
-        //   alert(total);
-        // })
-
-
-    });    
-
-</script>
-
-
+  @section('page-script')
+    @yield('head-script')
+  @endsection
 @endsection

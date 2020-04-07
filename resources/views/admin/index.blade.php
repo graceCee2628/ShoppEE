@@ -171,92 +171,86 @@
     </div>
   </div>
 </div>
+    @section('page-script')
+    <script type="text/javascript">
 
-<script type="text/javascript">
-
-    $(document).ready(function(){
-
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            }); 
-
-          $(".addProduct").on('click',function(e){
-            e.preventDefault();
-            $('#formModal').modal('show');
-          });
-
-          //Image change
-          $('#pimage').change(function(){
-
-            let reader = new FileReader();
-            reader.onload = (e) => { 
-              $('#image_preview_container').attr('src', e.target.result); 
-            }
-            reader.readAsDataURL(this.files[0]); 
-
-          });
+        $(document).ready(function(){
 
 
-
-          $('#form').on('submit', function(e){
-            e.preventDefault();
-
-            var formData = new FormData(this);
-
-            $.ajax({
-                type:'POST',
-                url:  "{{ url('save-product')}}",
-                data: formData,
-                cache:false,
-                contentType: false,
-                processData: false,
-                success:function(data) {
-                    console.log(data);
-                    alert('Data has been added successfully');
-                    // window.location.assign('/admin'); 
-                    location.reload();
-                                       
-                },
-                error:function(data){
-                    console.log(data.responseJSON.errors);
-                }             
-            });
-          });
-
-
-
-          $('.delete').on('click',function(e){
-            e.preventDefault();
-            var id = $(this).attr('id');
-            if(confirm('Are you sure you want to delete this data?')){
-
-                 $.ajax({
-                    method:'POST',
-                    url: 'delete-product/'+id,
-                    data:{
-                        id
-                    },
-                    success:function(response){
-                        // alert('Item is successfully deleted!');
-                        location.reload();
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
-                })
-               
-            }else{
-                return false;
-            }
+                }); 
+
+              $(".addProduct").on('click',function(e){
+                e.preventDefault();
+                $('#formModal').modal('show');
+              });
+
+              //Image change
+              $('#pimage').change(function(){
+
+                let reader = new FileReader();
+                reader.onload = (e) => { 
+                  $('#image_preview_container').attr('src', e.target.result); 
+                }
+                reader.readAsDataURL(this.files[0]); 
+
+              });
 
 
-          })
+
+              $('#form').on('submit', function(e){
+                e.preventDefault();
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    type:'POST',
+                    url:  "{{ url('save-product')}}",
+                    data: formData,
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    success:function(data) {
+                        console.log(data);
+                        alert('Data has been added successfully');
+                        // window.location.assign('/admin'); 
+                        location.reload();
+                                           
+                    },
+                    error:function(data){
+                        console.log(data.responseJSON.errors);
+                    }             
+                });
+              });
 
 
 
+              $('.delete').on('click',function(e){
+                e.preventDefault();
+                var id = $(this).attr('id');
+                if(confirm('Are you sure you want to delete this data?')){
 
-    });    
+                     $.ajax({
+                        method:'POST',
+                        url: 'delete-product/'+id,
+                        data:{
+                            id
+                        },
+                        success:function(response){
+                            // alert('Item is successfully deleted!');
+                            location.reload();
+                        }
+                    })
+                   
+                }else{
+                    return false;
+                }
+              })
+        }); 
 
-
-</script>
+    </script>
+    @endsection
 @endsection
